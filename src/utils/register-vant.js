@@ -4,10 +4,16 @@ import 'amfe-flexible/index.js'
 import {
   Button,
   Cell,
-  CellGroup
+  CellGroup,
+  Field,
+  NavBar,
+  Toast
 } from 'vant'
 
 Vue
   .use(Button)
   .use(Cell)
   .use(CellGroup)
+  .use(Field)
+  .use(NavBar)
+  .use(Toast)
