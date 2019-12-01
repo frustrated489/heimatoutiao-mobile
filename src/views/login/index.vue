@@ -58,6 +58,8 @@ export default {
 
       try {
         const res = await login(this.user)
+        // res.data.data => { token: 'xxx', refresh_token: 'xxx' }
+        this.$store.commit('setUser', res.data.data)
         console.log('登录成功', res)
         // 提示 success 或者 fail 的时候，会先把其他的toast先清除
         this.$toast.success('登录成功')
