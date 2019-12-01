@@ -3,6 +3,7 @@
  */
 import axios from 'axios'
 import jsonBig from 'json-bigint'
+import store from '@/store'
 
 // axios.create 方法：复制一个 axios
 const request = axios.create({
@@ -24,6 +25,12 @@ request.defaults.transformResponse = [function (data) {
 request.interceptors.request.use(
   function (config) {
     // Do something before request is sent
+    const user = store.state.user
+    if (user) {
+      // 注意：后端要求 Bearer 后面有个空格，多了少了都不行
+      // Authorization 也是后端要求的名字，不能乱写
+      config.headers.Authorization = `Bearer ${user.token}`
+    }
     return config
   },
   function (error) {
