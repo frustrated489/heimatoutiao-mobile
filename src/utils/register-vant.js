@@ -9,7 +9,11 @@ import {
   NavBar,
   Toast,
   Tabbar,
-  TabbarItem
+  TabbarItem,
+  Tab,
+  Tabs,
+  PullRefresh,
+  List
 } from 'vant'
 
 Vue
@@ -21,3 +25,7 @@ Vue
   .use(Toast)
   .use(Tabbar)
   .use(TabbarItem)
+  .use(Tab)
+  .use(Tabs)
+  .use(PullRefresh)
+  .use(List)
