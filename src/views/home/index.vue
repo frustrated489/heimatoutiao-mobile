@@ -5,7 +5,9 @@
     <!-- 导航栏 -->
     <!-- 频道列表 -->
     <van-tabs v-model="active">
-      <van-tab title="标签 1">
+      <van-tab :title="channel.name"
+      v-for="channel in channels"
+      :key="channel.id">
         <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
           <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
             <van-cell v-for="item in list" :key="item" :title="item" />
@@ -23,6 +25,7 @@
 </template>
 
 <script>
+import { getUserChannels } from '@/api/user'
 export default {
   name: 'Home',
   components: {},
@@ -33,12 +36,15 @@ export default {
       isLoading: false,
       list: [],
       loading: false,
-      finished: false
+      finished: false,
+      channels: [] // 频道列表
     }
   },
   computed: {},
   watch: {},
-  created () {},
+  created () {
+    this.loadUserChannels()
+  },
   methods: {
     onLoad () {
       // 异步更新数据
@@ -61,6 +67,10 @@ export default {
         this.isLoading = false
         this.count++
       }, 500)
+    },
+    async loadUserChannels () {
+      const res = await getUserChannels()
+      this.channels = res.data.data.channels
     }
   }
 }
