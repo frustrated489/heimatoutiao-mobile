@@ -4,13 +4,21 @@
     <van-nav-bar title="首页" />
     <!-- 导航栏 -->
     <!-- 频道列表 -->
-    <van-tabs v-model="active">
+    <van-tabs>
       <van-tab :title="channel.name"
       v-for="channel in channels"
       :key="channel.id">
-        <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
-          <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-            <van-cell v-for="item in list" :key="item" :title="item" />
+        <van-pull-refresh
+        v-model="isloading"
+        @refresh="onRefresh">
+          <van-list v-model="loading"
+          :finished="channle.finished"
+          finished-text="没有更多了"
+          @load="onLoad">
+            <van-cell
+            v-for="item in channel.articles"
+            :key="item"
+            :title="item" />
           </van-list>
         </van-pull-refresh>
       </van-tab>
@@ -42,19 +50,21 @@ export default {
   },
   methods: {
     onLoad () {
+      const activeChannel = this.channels[this.active]
+      const articles = activeChannel.articles
       // 异步更新数据
       setTimeout(() => {
         for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1)
+          articles.push(articles.length + 1)
         }
         // 加载状态结束
         this.loading = false
 
         // 数据全部加载完成
-        if (this.list.length >= 40) {
-          this.finished = true
+        if (articles.length >= 40) {
+          activeChannel.finished = true
         }
-      }, 500)
+      }, 1000)
     },
     onRefresh () {
       setTimeout(() => {
@@ -65,7 +75,12 @@ export default {
     },
     async loadUserChannels () {
       const res = await getUserChannels()
-      this.channels = res.data.data.channels
+      const channels = res.data.data.channels
+      channels.forEach(channel => {
+        channel.articles = [] // 频道的文章列表
+        channel.finished = false // 频道的加载结束状态
+      })
+      this.channels = channels
     }
   }
 }
