@@ -63,6 +63,7 @@ export default {
         console.log('登录成功', res)
         // 提示 success 或者 fail 的时候，会先把其他的toast先清除
         this.$toast.success('登录成功')
+        // 跳转到首页
         this.$router.push('/')
       } catch (err) {
         console.log('登录失败', err)
