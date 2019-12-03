@@ -5,20 +5,32 @@
     <!-- 导航栏 -->
     <!-- 频道列表 -->
     <van-tabs v-model="active">
-      <van-tab :title="channel.name"
-      v-for="channel in channels"
-      :key="channel.id">
-        <van-pull-refresh
-        v-model="isLoading"
-        @refresh="onRefresh">
-          <van-list v-model="loading"
-          :finished="channel.finished"
-          finished-text="没有更多了"
-          @load="onLoad">
+      <van-tab :title="channel.name" v-for="channel in channels" :key="channel.id">
+        <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+          <van-list
+            v-model="loading"
+            :finished="channel.finished"
+            finished-text="没有更多了"
+            @load="onLoad"
+          >
             <van-cell
-            v-for="article in channel.articles"
-            :key="article.art_id.toString()"
-            :title="article.title" />
+              v-for="(article, index) in channel.articles"
+              :key="index"
+              :title="article.title"
+            >
+              <div slot="label">
+                <van-grid :border="false" :column-num="3">
+                  <van-grid-item v-for="(img, index) in article.cover.images" :key="index">
+                    <van-image height="80" :src="img" />
+                  </van-grid-item>
+                </van-grid>
+                <div class="article-info">
+                  <span>{{article.aut_name}}</span>
+                  <span>{{article.comm_count}}</span>
+                  <span>{{article.pubdate}}</span>
+                </div>
+              </div>
+            </van-cell>
           </van-list>
         </van-pull-refresh>
       </van-tab>
@@ -118,5 +130,10 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
+.home {
+  .article-info span{
+    margin-right: 10px
+  }
+}
 </style>
