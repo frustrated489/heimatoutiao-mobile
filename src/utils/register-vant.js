@@ -17,7 +17,8 @@ import {
   Grid,
   GridItem,
   Image,
-  Lazyload
+  Lazyload,
+  Popup
 } from 'vant'
 
 Vue
@@ -37,3 +38,4 @@ Vue
   .use(GridItem)
   .use(Image)
   .use(Lazyload)
+  .use(Popup)

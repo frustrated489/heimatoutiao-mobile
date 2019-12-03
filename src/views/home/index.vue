@@ -26,8 +26,7 @@
                 </van-grid>
                 <div class="article-info">
                   <span>{{article.aut_name}}</span>
-                  <span>{{article.comm_count}}</span>
-                  <span>{{article.pubdate}}</span>
+                  <span>{{article.comm_count}}评论</span>
                   <span>{{article.pubdate | relativeTime}}</span>
                 </div>
               </div>
@@ -37,6 +36,20 @@
       </van-tab>
     </van-tabs>
     <!-- 频道列表 -->
+    <!-- 频道管理弹窗 -->
+    <!-- 弹窗组件
+    v-model="show" 控制是否展示
+    round 圆角
+    position="bottom" 弹出位置
+    :style="{height:'20%'}"弹出高度-->
+    <van-popup
+      v-model="isChannelShow"
+      round
+      position="bottom"
+      closeable
+      close-icon-position="top-left"
+      :style="{ height: '95%' }"
+    />
   </div>
 </template>
 
@@ -52,7 +65,8 @@ export default {
       active: 0,
       loading: false,
       isLoading: false,
-      channels: [] // 频道列表
+      channels: [], // 频道列表
+      isChannelShow: true
     }
   },
   computed: {},
