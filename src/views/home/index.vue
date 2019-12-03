@@ -66,7 +66,7 @@
         </van-grid>
         <van-cell title="推荐频道" :border="false" />
         <van-grid :gutter="10">
-          <van-grid-item v-for="(channel, index) in recommondChannels" :key="index" :text="channel.name" />
+          <van-grid-item v-for="(channel, index) in recommondChannels" :key="index" :text="channel.name" @click="onAddChannel(channel)" />
         </van-grid>
       </div>
     </van-popup>
@@ -189,6 +189,9 @@ export default {
     async onChannelOpen () {
       const res = await getAllChannels()
       this.allChannels = res.data.data.channels
+    },
+    onAddChannel (channel) {
+      this.channels.push(channel)
     }
   }
 }
