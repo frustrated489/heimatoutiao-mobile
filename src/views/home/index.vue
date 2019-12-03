@@ -53,20 +53,35 @@
       closeable
       close-icon-position="top-left"
       :style="{ height: '95%' }"
-      @open= 'onChannelOpen'
+      @open="onChannelOpen"
     >
       <div class="channel-container">
         <van-cell title="我的频道" :border="false">
-          <van-botton type="danger" size="mini">编辑</van-botton>
+          <van-button
+            type="danger"
+            size="mini"
+            @click="isEdit = !isEdit"
+          >{{ isEdit ? '完成' : '编辑' }}</van-button>
         </van-cell>
         <van-grid :gutter="10">
-          <van-grid-item v-for="channel in channels"
-            :key="channel.id"
-            :text="channel.name" />
+          <van-grid-item v-for="channel in channels" :key="channel.id" :text="channel.name">
+            <van-icon
+              class="close-icon"
+              slot="icon"
+              name="close"
+              size="20"
+              v-show="isEdit"
+            />
+          </van-grid-item>
         </van-grid>
         <van-cell title="推荐频道" :border="false" />
         <van-grid :gutter="10">
-          <van-grid-item v-for="(channel, index) in recommondChannels" :key="index" :text="channel.name" @click="onAddChannel(channel)" />
+          <van-grid-item
+            v-for="(channel, index) in recommondChannels"
+            :key="index"
+            :text="channel.name"
+            @click="onAddChannel(channel)"
+          />
         </van-grid>
       </div>
     </van-popup>
@@ -88,7 +103,8 @@ export default {
       isLoading: false,
       channels: [], // 频道列表
       isChannelShow: false, // 弹窗的显示状态
-      allChannels: [] // 所有频道列表
+      allChannels: [], // 所有频道列表
+      isEdit: false
     }
   },
   computed: {
@@ -212,15 +228,21 @@ export default {
 .van-tabs /deep/ .van-tabs__content {
   margin-top: 90px;
 }
-  .wap-nav {
-    position: sticky;
-    right: 0;
-    display: flex;
-    align-items: center;
-    background-color: #fff;
-    opacity: .8;
-  }
-  .channel-container {
-    padding-top: 30px;
-  }
+.wap-nav {
+  position: sticky;
+  right: 0;
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  opacity: 0.8;
+}
+.channel-container {
+  padding-top: 30px;
+}
+.close-icon {
+  position: absolute;
+  top: -24px;
+  right: -50px;
+}
+
 </style>
