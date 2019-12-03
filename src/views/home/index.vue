@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 导航栏 -->
-    <van-nav-bar title="首页" />
+    <van-nav-bar title="首页" fixed />
     <!-- 导航栏 -->
     <!-- 频道列表 -->
     <van-tabs v-model="active">
@@ -133,8 +133,22 @@ export default {
 
 <style scoped lang="less">
 .home {
-  .article-info span{
-    margin-right: 10px
+  .article-info span {
+    margin-right: 10px;
+  }
+  .van-tabs {
+    // 频道列表
+    /deep/ .van-tabs__wrap {
+      position: fixed;
+      top: 46px;
+      z-index: 2;
+      right: 0;
+      left: 0;
+    }
+    // 频道内容
+    /deep/ .van-tabs__content {
+      margin-top: 90px;
+    }
   }
 }
 </style>
