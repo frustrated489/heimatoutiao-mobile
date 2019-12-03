@@ -53,6 +53,7 @@
       closeable
       close-icon-position="top-left"
       :style="{ height: '95%' }"
+      @open= 'onChannelOpen'
     >
       <div class="channel-container">
         <van-cell title="我的频道" :border="false">
@@ -65,7 +66,7 @@
         </van-grid>
         <van-cell title="推荐频道" :border="false" />
         <van-grid :gutter="10">
-          <van-grid-item v-for="value in 8" :key="value" text="文字" />
+          <van-grid-item v-for="(channel, index) in recommondChannels" :key="index" :text="channel.name" />
         </van-grid>
       </div>
     </van-popup>
@@ -75,6 +76,7 @@
 <script>
 import { getUserChannels } from '@/api/user'
 import { getArticles } from '@/api/article'
+import { getAllChannels } from '@/api/channel'
 export default {
   name: 'HomePage',
   components: {},
@@ -85,12 +87,36 @@ export default {
       loading: false,
       isLoading: false,
       channels: [], // 频道列表
-      isChannelShow: true
+      isChannelShow: false, // 弹窗的显示状态
+      allChannels: [] // 所有频道列表
     }
   },
-  computed: {},
+  computed: {
+    // 获取推荐频道列表
+    recommondChannels () {
+      const arr = []
+      // 遍历所有频道
+      this.allChannels.forEach(channel => {
+        // 判断 channel 是否存在我的频道中
+        // 如果不存在，就证明它是剩余推荐的频道
+
+        // 数组的 find 方法
+        // 它会遍历数组，每遍历一次，它就判定 item.id === channel.id
+        // 如果 true，则停止遍历，返回满足该条件的元素
+        // 如果 false，则继续遍历
+        // 如果直到遍历结束都没有找到符合 item.id === channel.id 条件的元素，则返回 undefined
+        const ret = this.channels.find(item => item.id === channel.id)
+        if (!ret) {
+          arr.push(channel)
+        }
+      })
+      return arr
+      // return 所有频道-我的频道
+    }
+  },
   watch: {},
   created () {
+    // 加载用户频道
     this.loadUserChannels()
   },
 
@@ -159,6 +185,10 @@ export default {
         channel.timestamp = null // 用于获取频道下一页数据的事件戳
       })
       this.channels = channels
+    },
+    async onChannelOpen () {
+      const res = await getAllChannels()
+      this.allChannels = res.data.data.channels
     }
   }
 }
