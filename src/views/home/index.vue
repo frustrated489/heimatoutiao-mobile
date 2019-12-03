@@ -28,6 +28,7 @@
                   <span>{{article.aut_name}}</span>
                   <span>{{article.comm_count}}</span>
                   <span>{{article.pubdate}}</span>
+                  <span>{{article.pubdate | relativeTime}}</span>
                 </div>
               </div>
             </van-cell>
