@@ -82,12 +82,26 @@ export default {
         activeChannel.finished = true
       }
     },
-    onRefresh () {
-      setTimeout(() => {
-        this.$toast('刷新成功')
-        this.isLoading = false
-        this.count++
-      }, 500)
+    async onRefresh () {
+      const activeChannel = this.channels[this.active]
+      // 1. 请求获取最新数据
+      const res = await getArticles({
+        channel_id: activeChannel.id,
+        timestamp: Date.now(), // 获取最新数据传递当前最新时间戳即可
+        with_top: 1
+      })
+      // 2. 把数据放到列表的顶部
+      const articles = res.data.data.results
+      activeChannel.articles.unshift(...articles)
+
+      // 3. 停止下拉刷新的转圈圈
+      this.isLoading = false
+
+      // 4. 提示用户刷新成功
+      const message = articles.length
+        ? `更新了${articles.length}条数据`
+        : '暂无数据更新'
+      this.$toast(message)
     },
     async loadUserChannels () {
       const res = await getUserChannels()
