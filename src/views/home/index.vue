@@ -34,6 +34,10 @@
           </van-list>
         </van-pull-refresh>
       </van-tab>
+      <!-- 它默认会把你写的其他内容渲染到内容的底部 -->
+      <div class="wap-nav" slot="nav-right" @click="isChannelShow = true">
+        <van-icon name="wap-nav" />
+      </div>
     </van-tabs>
     <!-- 频道列表 -->
     <!-- 频道管理弹窗 -->
@@ -49,7 +53,20 @@
       closeable
       close-icon-position="top-left"
       :style="{ height: '95%' }"
-    />
+    >
+      <div class="channel-container">
+        <van-cell title="我的频道" :border="false">
+          <van-botton type="danger" size="mini">编辑</van-botton>
+        </van-cell>
+        <van-grid :gutter="10">
+          <van-grid-item v-for="value in 8" :key="value" text="文字" />
+        </van-grid>
+        <van-cell title="推荐频道" :border="false" />
+        <van-grid :gutter="10">
+          <van-grid-item v-for="value in 8" :key="value" text="文字" />
+        </van-grid>
+      </div>
+    </van-popup>
   </div>
 </template>
 
@@ -146,23 +163,29 @@ export default {
 </script>
 
 <style scoped lang="less">
-.home {
-  .article-info span {
-    margin-right: 10px;
-  }
-  .van-tabs {
-    // 频道列表
-    /deep/ .van-tabs__wrap {
-      position: fixed;
-      top: 46px;
-      z-index: 2;
-      right: 0;
-      left: 0;
-    }
-    // 频道内容
-    /deep/ .van-tabs__content {
-      margin-top: 90px;
-    }
-  }
+.home .article-info span {
+  margin-right: 10px;
 }
+.van-tabs /deep/ .van-tabs__wrap--scrollable {
+  position: fixed;
+  top: 46px;
+  left: 0;
+  right: 16px;
+  z-index: 2;
+}
+
+.van-tabs /deep/ .van-tabs__content {
+  margin-top: 90px;
+}
+  .wap-nav {
+    position: sticky;
+    right: 0;
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    opacity: .8;
+  }
+  .channel-container {
+    padding-top: 30px;
+  }
 </style>
