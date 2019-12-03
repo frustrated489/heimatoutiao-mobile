@@ -59,7 +59,9 @@
           <van-botton type="danger" size="mini">编辑</van-botton>
         </van-cell>
         <van-grid :gutter="10">
-          <van-grid-item v-for="value in 8" :key="value" text="文字" />
+          <van-grid-item v-for="channel in channels"
+            :key="channel.id"
+            :text="channel.name" />
         </van-grid>
         <van-cell title="推荐频道" :border="false" />
         <van-grid :gutter="10">
