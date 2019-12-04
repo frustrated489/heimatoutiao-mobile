@@ -2,7 +2,7 @@
   <div>
     <!-- 导航栏 -->
     <van-nav-bar fixed>
-      <van-button class="search-button" slot="title" size="small" round type="info" @click="$router.push('/search')">搜索</van-button>
+      <van-button class="search-button" slot="title" size="small" round type="info" @click="$router.push('/search')"><van-icon name="search" color="#fff" size="0.35rem" />搜索</van-button>
     </van-nav-bar>
     <!-- 导航栏 -->
     <!-- 频道列表 -->
@@ -67,7 +67,7 @@
         </van-cell>
         <van-grid :gutter="10">
           <van-grid-item v-for="(channel, index) in channels" :key="channel.id" :text="channel.name"
-          @click="onChannelActiveOrDelete(channel, index)">
+          @click="onChannelActiveOrDelete(index)">
             <van-icon
               class="close-icon"
               slot="icon"
@@ -95,6 +95,7 @@
 import { getUserChannels } from '@/api/user'
 import { getArticles } from '@/api/article'
 import { getAllChannels } from '@/api/channel'
+import { setItem, getItem } from '@/utils/storage'
 export default {
   name: 'HomePage',
   components: {},
@@ -133,7 +134,11 @@ export default {
       // return 所有频道-我的频道
     }
   },
-  watch: {},
+  watch: {
+    channels () {
+      setItem('channels', this.channels)
+    }
+  },
   created () {
     // 加载用户频道
     this.loadUserChannels()
@@ -195,14 +200,22 @@ export default {
       this.$toast(message)
     },
     async loadUserChannels () {
-      const res = await getUserChannels()
-      console.log(res)
-      const channels = res.data.data.channels
-      channels.forEach(channel => {
-        channel.articles = [] // 频道的文章列表
-        channel.finished = false // 频道的加载结束状态
-        channel.timestamp = null // 用于获取频道下一页数据的事件戳
-      })
+      let channels = []
+      const localChannels = getItem('channels')
+      // 如果有本地存储的频道列表，则获取使用
+      if (localChannels) {
+        channels = localChannels
+      } else {
+        // 如果没有，则请求获取线上推荐的频道列表
+        const res = await getUserChannels()
+        const onLineChannels = res.data.data.channels
+        onLineChannels.forEach(channel => {
+          channel.articles = [] // 频道的文章列表
+          channel.finished = false // 频道的加载结束状态
+          channel.timestamp = null // 用于获取频道下一页数据的时间戳
+        })
+        channels = onLineChannels
+      }
       this.channels = channels
     },
     async onChannelOpen () {
@@ -211,15 +224,17 @@ export default {
     },
     onAddChannel (channel) {
       this.channels.push(channel)
+      // setItem('channels', this.channels)
     },
-    onChannelActiveOrDelete (channel, index) {
-      if (this.isEdit && channel.name !== '推荐') {
+    onChannelActiveOrDelete (index) {
+      if (this.isEdit) {
         // 编辑状态，执行删除操作
         this.channels.splice(index, 1)
       } else {
         // 非编辑状态，执行切换频道
         this.active = index
         this.isChannelShow = false
+        // setItem('channels', this.channels)
       }
     }
   }
