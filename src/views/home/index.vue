@@ -66,13 +66,14 @@
           >{{ isEdit ? '完成' : '编辑' }}</van-button>
         </van-cell>
         <van-grid :gutter="10">
-          <van-grid-item v-for="channel in channels" :key="channel.id" :text="channel.name">
+          <van-grid-item v-for="(channel, index) in channels" :key="channel.id" :text="channel.name"
+          @click="onChannelActiveOrDelete(channel, index)">
             <van-icon
               class="close-icon"
               slot="icon"
               name="close"
               size="20"
-              v-show="isEdit"
+              v-show="isEdit && channel.name !== '推荐'"
             />
           </van-grid-item>
         </van-grid>
@@ -210,6 +211,16 @@ export default {
     },
     onAddChannel (channel) {
       this.channels.push(channel)
+    },
+    onChannelActiveOrDelete (channel, index) {
+      if (this.isEdit && channel.name !== '推荐') {
+        // 编辑状态，执行删除操作
+        this.channels.splice(index, 1)
+      } else {
+        // 非编辑状态，执行切换频道
+        this.active = index
+        this.isChannelShow = false
+      }
     }
   }
 }
