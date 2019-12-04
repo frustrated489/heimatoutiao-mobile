@@ -67,7 +67,7 @@
         </van-cell>
         <van-grid :gutter="10">
           <van-grid-item v-for="(channel, index) in channels" :key="channel.id" :text="channel.name"
-          @click="onChannelActiveOrDelete(index)">
+          @click="onChannelActiveOrDelete(channel, index)">
             <van-icon
               class="close-icon"
               slot="icon"
@@ -220,14 +220,20 @@ export default {
     },
     async onChannelOpen () {
       const res = await getAllChannels()
-      this.allChannels = res.data.data.channels
+      const allChannels = res.data.data.channels
+      allChannels.forEach(channel => {
+        channel.articles = [] // 频道的文章列表
+        channel.finished = false // 频道的加载结束状态
+        channel.timestamp = null // 用于获取频道下一页数据的时间戳
+      })
+      this.allChannels = allChannels
     },
     onAddChannel (channel) {
       this.channels.push(channel)
       // setItem('channels', this.channels)
     },
-    onChannelActiveOrDelete (index) {
-      if (this.isEdit) {
+    onChannelActiveOrDelete (channel, index) {
+      if (this.isEdit && channel.name !== '推荐') {
         // 编辑状态，执行删除操作
         this.channels.splice(index, 1)
       } else {
