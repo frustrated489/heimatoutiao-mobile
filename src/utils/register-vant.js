@@ -19,7 +19,8 @@ import {
   Image,
   Lazyload,
   Popup,
-  Icon
+  Icon,
+  Search
 } from 'vant'
 
 Vue
@@ -41,3 +42,4 @@ Vue
   .use(Lazyload)
   .use(Popup)
   .use(Icon)
+  .use(Search)

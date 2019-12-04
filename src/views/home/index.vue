@@ -1,7 +1,9 @@
 <template>
   <div>
     <!-- 导航栏 -->
-    <van-nav-bar title="首页" fixed />
+    <van-nav-bar fixed>
+      <van-button class="search-button" slot="title" size="small" round type="info" @click="$router.push('/search')">搜索</van-button>
+    </van-nav-bar>
     <!-- 导航栏 -->
     <!-- 频道列表 -->
     <van-tabs v-model="active">
@@ -214,6 +216,10 @@ export default {
 </script>
 
 <style scoped lang="less">
+.search-button {
+  width: 100%;
+  background-color: #5babfb;
+}
 .home .article-info span {
   margin-right: 10px;
 }
