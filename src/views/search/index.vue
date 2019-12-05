@@ -14,27 +14,27 @@
     <!-- /搜索框 -->
 
     <!-- 联想建议 -->
-    <van-cell-group>
-      <van-cell icon="search" :key="item"
-      v-for="item in suggestions"
-      @click="onSearch(item)">
+    <van-cell-group v-show="searchText">
+      <van-cell icon="search" :key="item" v-for="item in suggestions" @click="onSearch(item)">
         <div slot="title" v-html="highlight(item)"></div>
       </van-cell>
     </van-cell-group>
     <!-- /联想建议 -->
 
-     <!-- 搜索历史记录 -->
-     <van-cell-group>
-       <van-cell title="历史记录">
-         <span>全部删除</span>&nbsp;&nbsp;
-         <span>完成</span>
-         <van-icon name="delete" />
-       </van-cell>
-       <van-cell :title="item" :key="item" v-for="item in searchHistories" @click="onSearch(item)">
-         <van-icon name="close" />
-       </van-cell>
-     </van-cell-group>
-     <!-- /搜索历史记录 -->
+    <!-- 搜索历史记录 -->
+    <van-cell-group v-show="!searchText">
+      <van-cell title="历史记录">
+        <div v-show="isDeleteShow">
+          <span @click="searchHistories = []">全部删除</span>&nbsp;&nbsp;
+          <span @click="isDeleteShow = false">完成</span>
+        </div>
+        <van-icon v-show="!isDeleteShow" name="delete" @click="isDeleteShow = true" />
+      </van-cell>
+      <van-cell :title="item" :key="item" v-for="(item, index) in searchHistories" @click="onSearch(item)">
+        <van-icon v-show="isDeleteShow" @click.stop="searchHistories.splice(index, 1)" name="close" />
+      </van-cell>
+    </van-cell-group>
+    <!-- /搜索历史记录 -->
   </div>
 </template>
 
@@ -50,11 +50,16 @@ export default {
       searchText: '', // 用户输入的搜索文本
       str: 'hello <span style="color:red">world</span>',
       suggestions: [], // 搜索联想建议数据列表
-      searchHistories: getItem('search-histories') || [] // 搜索历史记录
+      searchHistories: getItem('search-histories') || [], // 搜索历史记录
+      isDeleteShow: false // 控制删除历史记录的显示状态
     }
   },
   computed: {},
-  watch: {},
+  watch: {
+    searchHistories () {
+      setItem('search-histories', this.searchHistories)
+    }
+  },
   created () {},
   methods: {
     // 搜索处理函数
@@ -87,7 +92,10 @@ export default {
     },
     highlight (str) {
       const reg = new RegExp(this.searchText, 'ig')
-      return str.replace(reg, `<span style="color: red">${this.searchText}</span>`)
+      return str.replace(
+        reg,
+        `<span style="color: red">${this.searchText}</span>`
+      )
     }
   }
 }
