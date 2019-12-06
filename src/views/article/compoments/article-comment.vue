@@ -2,20 +2,20 @@
   <div class="article-comments">
     <!-- 评论列表 -->
     <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-      <van-cell v-for="item in list" :key="item" :title="item">
+      <van-cell v-for="item in list" :key="item.com_id.toString()">
         <van-image
           slot="icon"
           round
           width="30"
           height="30"
           style="margin-right:10px"
-          src="https://img.yzcdn.cn/vant/cat.jpeg"
+          :src="item.aut_photo"
         />
-        <span style="color:#466b9d;" slot="title">hello</span>
+        <span style="color:#466b9d;" slot="title">{{item.aut_name}}</span>
         <div slot="label">
-          <p style="color: #363636;">我出去跟别人说我的是。。。</p>
+          <p style="color: #363636;">{{item.content}}</p>
           <p>
-            <span style="margin-right: 10px;">3天前</span>
+            <span style="margin-right: 10px;">{{item.pubdate|relaticeTime}}</span>
             <van-button size="mini" type="default">回复</van-button>
           </p>
         </div>
@@ -34,6 +34,7 @@
 </template>
 
 <script>
+import { getComments } from '@/api/comment'
 export default {
   name: 'ArticleComment',
   components: {},
@@ -42,27 +43,36 @@ export default {
     return {
       list: [], // 评论列表
       loading: false, // 上拉加载更多的 loading
-      finished: false // 是否加载结束
+      finished: false, // 是否加载结束
+      offset: null // 获取下一页评论数据的页码（偏移量）
     }
   },
   computed: {},
   watch: {},
   created () {},
   methods: {
-    onLoad () {
-      // 异步更新数据
-      setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1)
-        }
-        // 加载状态结束
-        this.loading = false
+    async onLoad () {
+      // 1. 请求获取数据
+      const res = await getComments({
+        type: 'a', // a或c 评论类型，a 对文章(article)的评论，c 对评论(comment)的回复
+        source: this.$route.params.articleId, // 源id，对文章id或评论id
+        offset: this.offset // 获取评论数据的偏移量，值为评论id，表示从此id的数据向后取，不传表示从第一页开始读取数据
+        // limit // 每页大小
+      })
+      // 2. 将数据添加到列表中
+      this.list.push(...res.data.data.results)
 
-        // 数据全部加载完成
-        if (this.list.length >= 40) {
-          this.finished = true
-        }
-      }, 500)
+      // 3. 关闭转圈圈
+      this.loading = false
+
+      // 4. 判断如果没有数据了，则将finished设置为true
+      const lastId = res.data.data.last_id
+      if (lastId) {
+        // 更新获取下一个数据的页码(偏移量)
+        this.offset = lastId
+      } else {
+        this.finished = true
+      }
     }
   }
 }
