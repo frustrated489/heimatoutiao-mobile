@@ -13,7 +13,7 @@
         <van-image round width="2rem" height="2rem" fit="fill" :src="article.aut_photo" />
         <div class="text">
           <p class="name">{{article.aut_name}}</p>
-          <p class="time">{{article.pubdate}}</p>
+          <p class="time">{{article.pubdate | relativeTime}}</p>
         </div>
         <van-button round size="small" type="info">+ 关注</van-button>
       </div>
@@ -36,26 +36,33 @@
 </template>
 
 <script>
+import { getArticle } from '@/api/article'
 export default {
   name: 'ArticleIndex',
   components: {},
-  props: {},
+  props: {
+    articleId: {
+      type: String,
+      required: true
+    }
+  },
   data () {
     return {
       loading: true, // 控制加载中的 loading 状态
-      article: { // 文章详情
-        title: 'hello world',
-        content: '<p>hello hello</p>',
-        aut_name: 'LPZ',
-        pubdate: '4天前',
-        aut_photo: 'http://toutiao.meiduo.site/FsyeQUotMscq-vji-2ZDiXrc44k5'
-      }
+      article: {} // 文章详情
     }
   },
   computed: {},
   watch: {},
-  created () {},
-  methods: {}
+  created () {
+    this.loadArticle()
+  },
+  methods: {
+    async loadArticle () {
+      const res = await getArticle(this.articleId)
+      this.article = res.data.data
+    }
+  }
 }
 </script>
 

@@ -35,7 +35,8 @@ const routes = [{
   // 建议：无论你是否使用到路由 name 的优势，都建议给它起个名字
   name: 'article',
   path: '/article/:articleId',
-  component: Article
+  component: Article,
+  props: true
 }]
 
 const router = new VueRouter({
