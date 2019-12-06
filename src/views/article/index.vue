@@ -15,12 +15,12 @@
           <p class="name">{{article.aut_name}}</p>
           <p class="time">{{article.pubdate | relativeTime}}</p>
         </div>
-        <van-button round size="small" type="info">+ 关注</van-button>
+        <van-button round size="small" type="info" @click="onFollow">{{article.is_followed?'取消关注':'+关注'}}</van-button>
       </div>
       <div class="content" v-html="article.content"></div>
       <div class="zan">
-        <van-button round size="small" hairline type="primary" plain icon="good-job-o">点赞</van-button>&nbsp;&nbsp;&nbsp;&nbsp;
-        <van-button round size="small" hairline type="danger" plain icon="delete">不喜欢</van-button>
+        <van-button round size="small" hairline type="primary" plain icon="good-job-o" @click="onLike">{{article.attitude === 1 ? '取消点赞' : '点赞'}}</van-button>&nbsp;&nbsp;&nbsp;&nbsp;
+        <van-button round size="small" hairline type="danger" plain icon="delete" @click="onDislike">{{article.attitude === 0 ? '取消不喜欢' : '不喜欢'}}</van-button>
       </div>
     </div>
     <!-- 文章详情 -->
@@ -36,7 +36,8 @@
 </template>
 
 <script>
-import { getArticle } from '@/api/article'
+import { getArticle, addLike, deleteLike, addDislike, deleteDislike } from '@/api/article'
+import { followUser, unFollowUser } from '@/api/user'
 export default {
   name: 'ArticleIndex',
   components: {},
@@ -70,6 +71,40 @@ export default {
       }
       // 无论是加载成功还是加载失败， loading 都需要结束
       this.loading = false
+    },
+    async onFollow () {
+      const userId = this.article.aut_id
+      // 如果已关注，则显示取消关注
+      if (this.article.is_followed) {
+        await unFollowUser(userId)
+        // this.article.is_followed = false
+      } else {
+        // 如果没有关注，则关注
+        await followUser(userId)
+        // this.article.is_followed = true
+      }
+      // 更新视图
+      this.article.is_followed = !this.article.is_followed
+    },
+    async onLike () {
+      // 如果已关注，则取消关注
+      if (this.article.attitude === 1) {
+        await deleteLike(this.articleId)
+        this.article.attitude = -1
+      } else {
+        // 如果没有关注，则关注
+        await addLike(this.articleId)
+        this.article.attitude = 1
+      }
+    },
+    async onDislike () {
+      if (this.article.attitude === 0) {
+        await deleteDislike(this.articleId)
+        this.article.attitude = -1
+      } else {
+        await addDislike(this.articleId)
+        this.article.attitude = 0
+      }
     }
   }
 }
