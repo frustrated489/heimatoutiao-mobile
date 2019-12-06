@@ -25,8 +25,8 @@
     <!-- 评论列表 -->
     <!-- 发布评论 -->
     <van-cell-group class="publish-wrap">
-      <van-field clearable placeholder="请输入评论内容">
-        <van-button slot="button" size="mini" type="info">发布</van-button>
+      <van-field v-model="inputComment" clearable placeholder="请输入评论内容">
+        <van-button slot="button" size="mini" type="info" @click="onAddComment">发布</van-button>
       </van-field>
     </van-cell-group>
     <!-- 发布评论 -->
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { getComments } from '@/api/comment'
+import { getComments, addComment } from '@/api/comment'
 export default {
   name: 'ArticleComment',
   components: {},
@@ -44,7 +44,8 @@ export default {
       list: [], // 评论列表
       loading: false, // 上拉加载更多的 loading
       finished: false, // 是否加载结束
-      offset: null // 获取下一页评论数据的页码（偏移量）
+      offset: null, // 获取下一页评论数据的页码（偏移量）
+      inputComment: ''
     }
   },
   computed: {},
@@ -73,6 +74,24 @@ export default {
       } else {
         this.finished = true
       }
+    },
+    async onAddComment () {
+      const inputComment = this.inputComment.trim()
+      // 非空校验
+      if (!inputComment.length) {
+        return
+      }
+      // 请求添加
+      const res = await addComment({
+        target: this.$route.params.articleId, // 评论的目标id（评论文章即为文章id，对评论进行回复则为评论id）
+        content: inputComment // 评论内容
+        // art_id // 文章id，对评论内容发表回复时，需要传递此参数，表面所属文章id。对文章进行评论，不要传递此参数
+      })
+      // 将发布的最新评论展示到列表顶部
+      this.list.unshift(res.data.data.new_obj)
+
+      // 清空文本框
+      this.inputComment = ''
     }
   }
 }
