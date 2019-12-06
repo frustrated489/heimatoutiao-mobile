@@ -4,10 +4,10 @@
     <van-nav-bar fixed title="文章详情" left-arrow @click-left="$router.back()" />
     <!-- 导航栏 -->
     <!-- 加载中 loading -->
-    <van-loading class="article-loading" />
+    <van-loading class="article-loading" v-if="loading" />
     <!-- 加载中 loading -->
     <!-- 文章详情 -->
-    <div class="detail">
+    <div class="detail" v-else-if="article.title">
       <h3 class="title">{{article.title}}</h3>
       <div class="author">
         <van-image round width="2rem" height="2rem" fit="fill" :src="article.aut_photo" />
@@ -25,7 +25,7 @@
     </div>
     <!-- 文章详情 -->
     <!-- 加载失败的消息提示 -->
-    <div class="error">
+    <div class="error" v-else>
       <p>
         网络延时，点击
         <a href="#" @click.prevent="loadArticle">刷新</a>试一试
@@ -59,8 +59,17 @@ export default {
   },
   methods: {
     async loadArticle () {
-      const res = await getArticle(this.articleId)
-      this.article = res.data.data
+      // 开启 loading
+      this.loading = true
+      try {
+        const { data } = await getArticle(this.$route.params.articleId)
+        this.article = data.data
+      } catch (err) {
+        // 如果请求出错就意味着获取数据失败了，我们这里可以提示用户加载失败
+        console.log(err)
+      }
+      // 无论是加载成功还是加载失败， loading 都需要结束
+      this.loading = false
     }
   }
 }
