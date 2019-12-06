@@ -15,10 +15,35 @@
             finished-text="没有更多了"
             @load="onLoad"
           >
+          <!--
+              直接拼：
+                @click="$router.push('/article/' + article.art_id)"
+              使用 ES6 模板字符串拼：
+                @click="$router.push(`/article/${article.art_id}`)"
+              根据路由名字跳转传参：
+                @click="$router.push({
+                  name: 'article',
+                  // params 是固定的
+                  params: {
+                    // key：动态路径参数的名字
+                    // value：数据值
+                    articleId: article.art_id
+                  }
+                })"
+             -->
             <van-cell
               v-for="(article, index) in channel.articles"
               :key="index"
               :title="article.title"
+              @click="$router.push({
+                name: 'article',
+                // params 是固定的
+                params: {
+                  // key: 动态路径参数的名字
+                  // value：数据值
+                  articleId: article.art_id
+                }
+              })"
             >
               <div slot="label">
                 <van-grid :border="false" :column-num="3">
