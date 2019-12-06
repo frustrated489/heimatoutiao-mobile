@@ -41,6 +41,7 @@
 <script>
 import { setItem, getItem } from '@/utils/storage'
 import { getSuggestions } from '@/api/search'
+import { debounce } from 'lodash'
 export default {
   name: 'SearchPage',
   components: {},
@@ -82,14 +83,14 @@ export default {
 
       this.$router.push(`/search/${q}`)
     },
-    async onSearchInput () {
+    onSearchInput: debounce(async function () {
       const searchText = this.searchText.trim()
       if (!searchText) {
         return
       }
       const res = await getSuggestions(this.searchText)
       this.suggestions = res.data.data.options
-    },
+    }, 300),
     highlight (str) {
       const reg = new RegExp(this.searchText, 'ig')
       return str.replace(
