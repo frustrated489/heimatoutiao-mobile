@@ -6,7 +6,7 @@
       right-text="保存"
     />
     <van-cell-group>
-      <van-cell title="头像" is-link>
+      <van-cell title="头像" is-link @click="onShowFile">
         <van-image
           round
           width="30"
@@ -14,6 +14,7 @@
           :src="user.photo"
         />
       </van-cell>
+      <input type="file" hidden ref="file" @change="onFileChange">
       <van-cell title="昵称" :value="user.name" is-link />
       <van-cell title="性别" :value="user.gender === 0 ? '男' : '女'" is-link />
       <van-cell title="生日" :value="user.birthday" is-link />
@@ -32,7 +33,11 @@ export default {
       user: {}
     }
   },
-  computed: {},
+  computed: {
+    file () {
+      return this.$ref.file
+    }
+  },
   watch: {},
   created () {
     this.loadUserProfile()
@@ -41,6 +46,12 @@ export default {
     async loadUserProfile () {
       const res = await getProfile()
       this.user = res.data.data
+    },
+    onShowFile () {
+      this.file.click()
+    },
+    onFileChange () {
+      this.user.photo = URL.createObjectURL(this.file.files[0])
     }
   }
 }
