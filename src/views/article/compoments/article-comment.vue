@@ -43,7 +43,7 @@
       position="bottom"
       :style="{ height: '90%' }"
     >
-      <comment-reply :comment="currentComment" />
+      <comment-reply :comment="currentComment" v-if="isReplyShow = false" @close-reply="isReplyShow = false" />
       <!-- 回复列表 -->
     </van-popup>
     <!-- 评论回复 -->
