@@ -15,11 +15,16 @@
         <div slot="label">
           <p style="color: #363636;">{{item.content}}</p>
           <p>
-            <span style="margin-right: 10px;">{{item.pubdate|relaticeTime}}</span>
-            <van-button size="mini" type="default">回复</van-button>
+            <span style="margin-right: 10px;">{{item.pubdate|relativeTime}}</span>
+            <van-button size="mini" type="default" @click="onReplyShow(item)">回复</van-button>
           </p>
         </div>
-        <van-icon slot="right-icon" color="red" :name="item.is_liking ? 'like' : 'like-o'" @click="onCommentLike(item)" />
+        <van-icon
+          slot="right-icon"
+          color="red"
+          :name="item.is_liking ? 'like' : 'like-o'"
+          @click="onCommentLike(item)"
+        />
       </van-cell>
     </van-list>
     <!-- 评论列表 -->
@@ -30,14 +35,34 @@
       </van-field>
     </van-cell-group>
     <!-- 发布评论 -->
+    <!-- 评论回复 -->
+    <van-popup
+      v-model="isReplyShow"
+      get-container="body"
+      round
+      position="bottom"
+      :style="{ height: '90%' }"
+    >
+      <comment-reply :comment="currentComment" />
+      <!-- 回复列表 -->
+    </van-popup>
+    <!-- 评论回复 -->
   </div>
 </template>
 
 <script>
-import { getComments, addComment, addCommentLike, deleteCommentLike } from '@/api/comment'
+import {
+  getComments,
+  addComment,
+  addCommentLike,
+  deleteCommentLike
+} from '@/api/comment'
+import CommentReply from './comment-reply'
 export default {
   name: 'ArticleComment',
-  components: {},
+  components: {
+    CommentReply
+  },
   props: {},
   data () {
     return {
@@ -45,7 +70,9 @@ export default {
       loading: false, // 上拉加载更多的 loading
       finished: false, // 是否加载结束
       offset: null, // 获取下一页评论数据的页码（偏移量）
-      inputComment: ''
+      inputComment: '', // 添加评论输入框文本
+      isReplyShow: false, // 控制回复弹层的显示
+      currentComment: {} // 存储当前点击回复的评论对象
     }
   },
   computed: {},
@@ -104,6 +131,11 @@ export default {
       // 更新视图状态
       comment.is_liking = !comment.is_liking
       this.$toast('操作成功')
+    },
+    async onReplyShow (comment) {
+      this.currentComment = comment
+      // 显示回复的弹层
+      this.isReplyShow = true
     }
   }
 }
