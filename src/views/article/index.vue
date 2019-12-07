@@ -69,8 +69,9 @@ export default {
       // 开启 loading
       this.loading = true
       try {
-        const { data } = await getArticle(this.$route.params.articleId)
-        this.article = data.data
+        // this.$route.params.articleId
+        const res = await getArticle(this.articleId)
+        this.article = res.data.data
       } catch (err) {
         // 如果请求出错就意味着获取数据失败了，我们这里可以提示用户加载失败
         console.log(err)
