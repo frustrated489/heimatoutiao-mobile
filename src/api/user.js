@@ -48,3 +48,13 @@ export function unFollowUser (userId) {
     url: `/app/v1_0/user/followings/${userId}`
   })
 }
+
+/**
+ * 获取当前登录用户自己信息
+ */
+export function getSelf () {
+  return request({
+    method: 'GET',
+    url: '/app/v1_0/user'
+  })
+}

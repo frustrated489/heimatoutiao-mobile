@@ -61,6 +61,7 @@
 </template>
 
 <script>
+import { getSelf } from '@/api/user'
 export default {
   name: 'UserIndex',
   components: {},
@@ -72,7 +73,12 @@ export default {
   },
   computed: {},
   watch: {},
-  created () {},
+  created () {
+    // 如果用户登录了才发请求展示用户信息
+    if (this.$store.state.user) {
+      this.loadUser()
+    }
+  },
   methods: {
     onLogout () {
       // Dialog 组件既可以在模板中使用，也可以通过JavaScript来调用
@@ -88,6 +94,10 @@ export default {
       }).catch(() => {
         // 取消执行这里
       })
+    },
+    async loadUser () {
+      const res = await getSelf()
+      this.user = res.data.data
     }
   }
 }
