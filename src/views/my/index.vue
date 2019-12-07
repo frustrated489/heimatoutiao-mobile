@@ -49,12 +49,12 @@
         <van-grid-item icon="browsing-history" text="浏览历史"/>
       </van-grid>
     </van-cell-group>
-    <van-cell-group>
+    <van-cell-group :border="false">
       <van-cell title="消息通知" is-link />
       <van-cell title="用户反馈" is-link />
       <van-cell title="小智同学" is-link @click="$router.push('/chat')" />
       <van-cell title="系统设置" is-link to="/settings" />
-      <van-cell title="退出登录" @click="onLogout" />
+      <van-cell style="text-align:center; color:blue;" title="退出登录" @click="onLogout" />
     </van-cell-group>
     <!-- /其它 -->
   </div>

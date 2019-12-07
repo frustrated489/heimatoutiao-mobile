@@ -7,6 +7,7 @@ import Search from '@/views/search'
 import SearchResult from '@/views/search-result'
 import Article from '@/views/article'
 import My from '@/views/my'
+import User from '@/views/user'
 Vue.use(VueRouter)
 
 // 配置路由表
@@ -42,6 +43,10 @@ const routes = [{
   path: '/article/:articleId',
   component: Article,
   props: true
+}, {
+  name: 'user',
+  path: '/user',
+  component: User
 }]
 
 const router = new VueRouter({
