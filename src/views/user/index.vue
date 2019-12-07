@@ -1,20 +1,11 @@
 <template>
   <div>
-      <van-nav-bar
-      title="个人信息"
-      left-arrow
-      right-text="保存"
-    />
+    <van-nav-bar title="个人信息" left-arrow right-text="保存" @click="onSave" />
     <van-cell-group>
       <van-cell title="头像" is-link @click="onShowFile">
-        <van-image
-          round
-          width="30"
-          height="30"
-          :src="user.photo"
-        />
+        <van-image round width="30" height="30" :src="user.photo" />
       </van-cell>
-      <input type="file" hidden ref="file" @change="onFileChange">
+      <input type="file" hidden ref="file" @change="onFileChange" />
       <van-cell title="昵称" :value="user.name" is-link />
       <van-cell title="性别" :value="user.gender === 0 ? '男' : '女'" is-link />
       <van-cell title="生日" :value="user.birthday" is-link />
@@ -23,7 +14,7 @@
 </template>
 
 <script>
-import { getProfile } from '@/api/user'
+import { getProfile, updateUserPhoto } from '@/api/user'
 export default {
   name: 'UserIndex',
   components: {},
@@ -52,6 +43,30 @@ export default {
     },
     onFileChange () {
       this.user.photo = URL.createObjectURL(this.file.files[0])
+    },
+    async onSave () {
+      // 如果 Content-Type 要求是application/json，则 data 传普通对象 {}
+      // 如果 Content-Type 要求是multipart/form-data，则 data 传 FormData 对象
+      // 纵观所有数据接口，你会发现大多数的接口都要求 Content-Type 要求是application/json
+      // 一般只有涉及到文件上传的数据接口才要求Content-Type要求是multipart/form-data
+      // 这个时候传递一个 FormData 对象
+      this.$toast.loading({
+        duration: 0, // 持续展示toast
+        forbidClick: true, // 禁用背景点击
+        loadingType: 'spinner',
+        message: '保存中'
+      })
+
+      try {
+        const formData = new FormData()
+        // formData.append('名字', 数据)
+        formData.append('photo', this.$refs.file.files[0])
+        await updateUserPhoto(formData)
+        this.$toast.success('保存成功')
+      } catch (err) {
+        console.log(err)
+        this.$toast.fail('保存失败')
+      }
     }
   }
 }
