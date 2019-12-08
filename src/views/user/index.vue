@@ -7,41 +7,48 @@
       </van-cell>
       <input type="file" hidden ref="file" @change="onFileChange" />
       <van-cell title="昵称" :value="user.name" is-link @click="isNameShow = true" />
-      <van-cell title="性别" :value="user.gender === 0 ? '男' : '女'" is-link @click="isGenerShow = true" />
-      <van-cell title="生日" :value="user.birthday" is-link />
+      <van-cell
+        title="性别"
+        :value="user.gender === 0 ? '男' : '女'"
+        is-link
+        @click="isGenerShow = true"
+      />
+      <van-cell title="生日" :value="user.birthday" is-link @click="isBirthdayShow = true" />
     </van-cell-group>
     <!-- 编辑修改用户昵称弹窗 -->
-    <van-dialog
-      v-model="isNameShow"
-      title="昵称修改"
-      show-cancel-button
-      @confirm="onNameConfirm"
-    >
+    <van-dialog v-model="isNameShow" title="昵称修改" show-cancel-button @confirm="onNameConfirm">
       <!--
         v-model 是
           :value="user.name"
           @input="user.name = 事件参数"
-       -->
-      <van-field
-        :value="user.name"
-        placeholder="请输入用户名"
-        @input="inputName = $event"
-      />
+      -->
+      <van-field :value="user.name" placeholder="请输入用户名" @input="inputName = $event" />
     </van-dialog>
     <!-- 编辑修改用户昵称弹窗 -->
     <!-- 编辑用户性别上拉菜单 -->
     <van-action-sheet
-       v-model="isGenerShow"
-       :actions="actions"
-       cancel-text="取消"
-       @select="onGenerSelect"
-     />
+      v-model="isGenerShow"
+      :actions="actions"
+      cancel-text="取消"
+      @select="onGenerSelect"
+    />
     <!-- 编辑用户性别上拉菜单 -->
+    <!-- 修改生日 -->
+    <van-popup v-model="isBirthdayShow" position="bottom" :style="{ height: '40%' }">
+      <van-datetime-picker
+        v-model="currentDate"
+        type="date"
+        :min-date="minDate"
+        @confirm="onBirthdayConfirm"
+      />
+    </van-popup>
+    <!-- 修改生日 -->
   </div>
 </template>
 
 <script>
 import { getProfile, updateUserPhoto } from '@/api/user'
+import dayjs from 'dayjs'
 export default {
   name: 'UserIndex',
   components: {},
@@ -52,11 +59,19 @@ export default {
       isNameShow: false,
       inputName: '',
       isGenerShow: false,
-      actions: [{
-        name: '男', value: 0
-      }, {
-        name: '女', value: 1
-      }]
+      actions: [
+        {
+          name: '男',
+          value: 0
+        },
+        {
+          name: '女',
+          value: 1
+        }
+      ],
+      isBirthdayShow: false,
+      currentDate: new Date(),
+      minDate: new Date(1970, 1, 1)
     }
   },
   computed: {
@@ -72,6 +87,7 @@ export default {
     async loadUserProfile () {
       const res = await getProfile()
       this.user = res.data.data
+      this.currentDate = new Date(this.user.birthday)
     },
     onShowFile () {
       this.file.click()
@@ -112,6 +128,10 @@ export default {
 
       // 关闭弹层
       this.isGenerShow = false
+    },
+    onBirthdayConfirm (value) {
+      this.user.birthday = dayjs(value).format('YYYY-MM-DD')
+      this.isBirthdayShow = false
     }
   }
 }

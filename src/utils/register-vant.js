@@ -24,7 +24,8 @@ import {
   Loading,
   Dialog,
   Divider,
-  ActionSheet
+  ActionSheet,
+  DatetimePicker
 } from 'vant'
 
 Vue
@@ -51,3 +52,4 @@ Vue
   .use(Dialog)
   .use(Divider)
   .use(ActionSheet)
+  .use(DatetimePicker)
