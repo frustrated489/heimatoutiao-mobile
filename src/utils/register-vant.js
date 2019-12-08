@@ -23,7 +23,8 @@ import {
   Search,
   Loading,
   Dialog,
-  Divider
+  Divider,
+  ActionSheet
 } from 'vant'
 
 Vue
@@ -49,3 +50,4 @@ Vue
   .use(Loading)
   .use(Dialog)
   .use(Divider)
+  .use(ActionSheet)

@@ -7,10 +7,10 @@
       </van-cell>
       <input type="file" hidden ref="file" @change="onFileChange" />
       <van-cell title="昵称" :value="user.name" is-link @click="isNameShow = true" />
-      <van-cell title="性别" :value="user.gender === 0 ? '男' : '女'" is-link />
+      <van-cell title="性别" :value="user.gender === 0 ? '男' : '女'" is-link @click="isGenerShow = true" />
       <van-cell title="生日" :value="user.birthday" is-link />
     </van-cell-group>
-
+    <!-- 编辑修改用户昵称弹窗 -->
     <van-dialog
       v-model="isNameShow"
       title="昵称修改"
@@ -28,6 +28,15 @@
         @input="inputName = $event"
       />
     </van-dialog>
+    <!-- 编辑修改用户昵称弹窗 -->
+    <!-- 编辑用户性别上拉菜单 -->
+    <van-action-sheet
+       v-model="isGenerShow"
+       :actions="actions"
+       cancel-text="取消"
+       @select="onGenerSelect"
+     />
+    <!-- 编辑用户性别上拉菜单 -->
   </div>
 </template>
 
@@ -41,7 +50,13 @@ export default {
     return {
       user: {},
       isNameShow: false,
-      inputName: ''
+      inputName: '',
+      isGenerShow: false,
+      actions: [{
+        name: '男', value: 0
+      }, {
+        name: '女', value: 1
+      }]
     }
   },
   computed: {
@@ -90,6 +105,13 @@ export default {
     },
     onNameConfirm () {
       this.user.name = this.inputName
+    },
+    onGenerSelect (item) {
+      // 更新数据
+      this.user.gender = item.value
+
+      // 关闭弹层
+      this.isGenerShow = false
     }
   }
 }
