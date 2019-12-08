@@ -6,10 +6,28 @@
         <van-image round width="30" height="30" :src="user.photo" />
       </van-cell>
       <input type="file" hidden ref="file" @change="onFileChange" />
-      <van-cell title="昵称" :value="user.name" is-link />
+      <van-cell title="昵称" :value="user.name" is-link @click="isNameShow = true" />
       <van-cell title="性别" :value="user.gender === 0 ? '男' : '女'" is-link />
       <van-cell title="生日" :value="user.birthday" is-link />
     </van-cell-group>
+
+    <van-dialog
+      v-model="isNameShow"
+      title="昵称修改"
+      show-cancel-button
+      @confirm="onNameConfirm"
+    >
+      <!--
+        v-model 是
+          :value="user.name"
+          @input="user.name = 事件参数"
+       -->
+      <van-field
+        :value="user.name"
+        placeholder="请输入用户名"
+        @input="inputName = $event"
+      />
+    </van-dialog>
   </div>
 </template>
 
@@ -21,12 +39,14 @@ export default {
   props: {},
   data () {
     return {
-      user: {}
+      user: {},
+      isNameShow: false,
+      inputName: ''
     }
   },
   computed: {
     file () {
-      return this.$ref.file
+      return this.$refs.file
     }
   },
   watch: {},
@@ -67,6 +87,9 @@ export default {
         console.log(err)
         this.$toast.fail('保存失败')
       }
+    },
+    onNameConfirm () {
+      this.user.name = this.inputName
     }
   }
 }
