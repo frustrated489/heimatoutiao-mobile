@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { getProfile, updateUserPhoto } from '@/api/user'
+import { getProfile, updateUserPhoto, updateUserProfile } from '@/api/user'
 import dayjs from 'dayjs'
 export default {
   name: 'UserIndex',
@@ -109,10 +109,20 @@ export default {
       })
 
       try {
-        const formData = new FormData()
-        // formData.append('名字', 数据)
-        formData.append('photo', this.$refs.file.files[0])
-        await updateUserPhoto(formData)
+        // 保存头像
+        const fileObj = this.file.files[0]
+        // 如果用户选了新的头像才更新头像
+        if (fileObj) {
+          const fd = new FormData()
+          fd.append('photo', fileObj)
+          await updateUserPhoto(fd)
+        }
+        const { name, gender, birthday } = this.user
+        await updateUserProfile({
+          name,
+          gender,
+          birthday
+        })
         this.$toast.success('保存成功')
       } catch (err) {
         console.log(err)

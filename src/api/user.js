@@ -79,3 +79,14 @@ export function updateUserPhoto (data) {
     data
   })
 }
+
+/**
+ * 更新用户照片资料
+ */
+export function updateUserProfile (data) {
+  return request({
+    method: 'PATCH',
+    url: '/app/v1_0/user/profile',
+    data
+  })
+}
